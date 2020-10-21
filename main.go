@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -14,10 +15,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//Conexão com o MongoDB
 var collection = helper.ConnectDB()
 
+//GetAll retorna todos os usuários
 func GetAll(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 
 	// we created Usuario array
@@ -57,7 +59,9 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuarios) // encode similar to serialize process.
 }
 
+//GetByID Retorna um usuário pelo seu ID
 func GetByID(w http.ResponseWriter, r *http.Request) {
+
 	// set header.
 	w.Header().Set("Content-Type", "application/json")
 
@@ -80,7 +84,9 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuario)
 }
 
+//Create cria um novo usuário
 func Create(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var usuario models.Usuario
@@ -88,7 +94,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	// we decode our body request params
 	_ = json.NewDecoder(r.Body).Decode(&usuario)
 
-	// insert our book model.
 	result, err := collection.InsertOne(context.TODO(), usuario)
 
 	if err != nil {
@@ -99,7 +104,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+//Update atualiza informações de um usuário
 func Update(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var params = mux.Vars(r)
@@ -136,7 +143,9 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuario)
 }
 
+//Delete exclui um usuário
 func Delete(w http.ResponseWriter, r *http.Request) {
+	var collection = helper.ConnectDB()
 	// Set header
 	w.Header().Set("Content-Type", "application/json")
 
@@ -171,7 +180,9 @@ func main() {
 	r.HandleFunc("/ConexaoSolar", Delete).Methods("DELETE")
 	r.HandleFunc("/ConexaoSolar/{id}", GetByID).Methods("GET")
 
-	config := helper.GetConfiguration()
-	log.Fatal(http.ListenAndServe(config.Port, r))
+	// set our port address
+	var port = ":8000"
+	fmt.Println("Server running in port:", port)
+	log.Fatal(http.ListenAndServe(port, r))
 
 }
