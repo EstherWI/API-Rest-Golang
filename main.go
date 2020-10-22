@@ -15,11 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var collection = helper.ConnectDB()
-
 //GetAll retorna todos os usuários
 func GetAll(w http.ResponseWriter, r *http.Request) {
-
+	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
 	// we created Usuario array
@@ -61,7 +59,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 //GetByID Retorna um usuário pelo seu ID
 func GetByID(w http.ResponseWriter, r *http.Request) {
-
+	var collection = helper.ConnectDB()
 	// set header.
 	w.Header().Set("Content-Type", "application/json")
 
@@ -86,7 +84,7 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 
 //Create cria um novo usuário
 func Create(w http.ResponseWriter, r *http.Request) {
-
+	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
 	var usuario models.Usuario
@@ -94,6 +92,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	// we decode our body request params
 	_ = json.NewDecoder(r.Body).Decode(&usuario)
 
+	// insert our book model.
 	result, err := collection.InsertOne(context.TODO(), usuario)
 
 	if err != nil {
@@ -106,7 +105,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 //Update atualiza informações de um usuário
 func Update(w http.ResponseWriter, r *http.Request) {
-
+	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
 	var params = mux.Vars(r)
@@ -128,8 +127,8 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			{"name", usuario.Name},
 			{"email", usuario.Email},
 			{"senha", usuario.Senha},
-		}},
-	}
+		},
+		}}
 
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&usuario)
 
@@ -176,8 +175,8 @@ func main() {
 
 	r.HandleFunc("/ConexaoSolar", GetAll).Methods("GET")
 	r.HandleFunc("/ConexaoSolar", Create).Methods("POST")
-	r.HandleFunc("/ConexaoSolar", Update).Methods("PUT")
-	r.HandleFunc("/ConexaoSolar", Delete).Methods("DELETE")
+	r.HandleFunc("/ConexaoSolar/{id}", Update).Methods("PUT")
+	r.HandleFunc("/ConexaoSolar/{id}", Delete).Methods("DELETE")
 	r.HandleFunc("/ConexaoSolar/{id}", GetByID).Methods("GET")
 
 	// set our port address
