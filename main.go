@@ -162,10 +162,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(deleteResult)
 }
 
+func handler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/index.html")
+}
 func main() {
 	//Init Router
 	r := mux.NewRouter()
 
+	r.HandleFunc("/", handler)
 	r.HandleFunc("/ConexaoSolar", GetAll).Methods("GET")
 	r.HandleFunc("/ConexaoSolar", Create).Methods("POST")
 	r.HandleFunc("/ConexaoSolar/{id}", Update).Methods("PUT")
