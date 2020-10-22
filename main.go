@@ -15,15 +15,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//GetAll retorna todos os usuários
+//GetAll : retorna todos os usuários
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
-	// we created Usuario array
+	// array para Usuario
 	var usuarios []models.Usuario
 
-	// bson.M{},  we passed empty filter. So we want to get all data.
 	cur, err := collection.Find(context.TODO(), bson.M{})
 
 	if err != nil {
@@ -32,21 +31,19 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Close the cursor once finished
-	/*A defer statement defers the execution of a function until the surrounding function returns.
-	simply, run cur.Close() process but after cur.Next() finished.*/
 	defer cur.Close(context.TODO())
 
 	for cur.Next(context.TODO()) {
 
-		// create a value into which the single document can be decoded
+		// cria um valor no qual o único documento possa ser decodificado
 		var usuario models.Usuario
-		// & character returns the memory address of the following variable.
-		err := cur.Decode(&usuario) // decode similar to deserialize process.
+		// & retorna o endereço de memória da seguinte variável.
+		err := cur.Decode(&usuario) // decode semelhante ao processo de desserialização.
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// add item our array
+		// add item no array
 		usuarios = append(usuarios, usuario)
 	}
 
@@ -54,23 +51,23 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	json.NewEncoder(w).Encode(usuarios) // encode similar to serialize process.
+	json.NewEncoder(w).Encode(usuarios) // encode semelhante ao processo de serialização.
 }
 
-//GetByID Retorna um usuário pelo seu ID
+//GetByID : Retorna um usuário pelo seu ID
 func GetByID(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	// set header.
 	w.Header().Set("Content-Type", "application/json")
 
 	var usuario models.Usuario
-	// we get params with mux.
+	// resgatando parametros com mux.
 	var params = mux.Vars(r)
 
 	// string to primitive.ObjectID
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
-	// We create filter. If it is unnecessary to sort data for you, you can use bson.M{}
+	// Filtro pelo id.
 	filter := bson.M{"_id": id}
 	err := collection.FindOne(context.TODO(), filter).Decode(&usuario)
 
@@ -82,17 +79,16 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuario)
 }
 
-//Create cria um novo usuário
+//Create : cria um novo usuário
 func Create(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
 	var usuario models.Usuario
 
-	// we decode our body request params
 	_ = json.NewDecoder(r.Body).Decode(&usuario)
 
-	// insert our book model.
+	// inserindo usuario
 	result, err := collection.InsertOne(context.TODO(), usuario)
 
 	if err != nil {
@@ -103,25 +99,24 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-//Update atualiza informações de um usuário
+//Update : atualiza informações de um usuário
 func Update(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
 
 	var params = mux.Vars(r)
 
-	//Get id from parameters
+	//Pegando id dos parametros
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
 	var usuario models.Usuario
 
-	// Create filter
+	// Filtro pelo id
 	filter := bson.M{"_id": id}
 
-	// Read update model from body request
 	_ = json.NewDecoder(r.Body).Decode(&usuario)
 
-	// prepare update model.
+	// Atualizando model.
 	update := bson.D{
 		{"$set", bson.D{
 			{"name", usuario.Name},
@@ -142,19 +137,19 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuario)
 }
 
-//Delete exclui um usuário
+//Delete : exclui um usuário
 func Delete(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	// Set header
 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
+	// Resgata parâmetros
 	var params = mux.Vars(r)
 
 	// string to primitve.ObjectID
 	id, err := primitive.ObjectIDFromHex(params["id"])
 
-	// prepare filter.
+	// Filtro pelo id
 	filter := bson.M{"_id": id}
 
 	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
@@ -167,8 +162,6 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(deleteResult)
 }
 
-// var client *mongo.Client
-
 func main() {
 	//Init Router
 	r := mux.NewRouter()
@@ -179,7 +172,6 @@ func main() {
 	r.HandleFunc("/ConexaoSolar/{id}", Delete).Methods("DELETE")
 	r.HandleFunc("/ConexaoSolar/{id}", GetByID).Methods("GET")
 
-	// set our port address
 	var port = ":8000"
 	fmt.Println("Server running in port:", port)
 	log.Fatal(http.ListenAndServe(port, r))
