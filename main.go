@@ -10,6 +10,7 @@ import (
 	"ConexaoSolar/helper"
 	"ConexaoSolar/models"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,7 +20,7 @@ import (
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
 	w.Header().Set("Content-Type", "application/json")
-
+	HttpInfo(r)
 	// array para Usuario
 	var usuarios []models.Usuario
 
@@ -162,22 +163,27 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(deleteResult)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./web/index.html")
+//HttpInfo
+func HttpInfo(r *http.Request) {
+	fmt.Printf("%s\t %s\t %s%s\r\n", r.Method, r.Proto, r.Host, r.URL)
 }
 func main() {
 	//Init Router
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", handler)
-	r.HandleFunc("/ConexaoSolar", GetAll).Methods("GET")
-	r.HandleFunc("/ConexaoSolar", Create).Methods("POST")
-	r.HandleFunc("/ConexaoSolar/{id}", Update).Methods("PUT")
-	r.HandleFunc("/ConexaoSolar/{id}", Delete).Methods("DELETE")
-	r.HandleFunc("/ConexaoSolar/{id}", GetByID).Methods("GET")
-
+	headers := handlers.AllowedHeaders([]string{"X-Request", "Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	origins := handlers.AllowedOrigins([]string{"*"})
+	//r.HandleFunc("/", handler)
+	r.HandleFunc("/users", GetAll).Methods("GET")
+	r.HandleFunc("/users", Create).Methods("POST")
+	r.HandleFunc("/users/{id}", Update).Methods("PUT")
+	r.HandleFunc("/users/{id}", Delete).Methods("DELETE")
+	r.HandleFunc("/users/{id}", GetByID).Methods("GET")
 	var port = ":8000"
 	fmt.Println("Server running in port:", port)
-	log.Fatal(http.ListenAndServe(port, r))
+	log.Fatal(http.ListenAndServe(":8000", handlers.CORS(headers, methods, origins)(r)))
+
+	//log.Fatal(http.ListenAndServe(port, r))
 
 }
