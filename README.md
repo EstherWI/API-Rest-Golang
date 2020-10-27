@@ -18,7 +18,8 @@ Especificar a URI do banco, o nome do banco e a collection (instruções nos com
 # Execute a aplicação em modo de desenvolvimento
 ```bash
 go build main.go
+go run main.go
 ```
-$ go run main.go
+$ 
 
 # O servidor inciará na porta:8000 - acesse <http://localhost:8000/users> 
