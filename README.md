@@ -1,20 +1,22 @@
 <h1 align="center">ConexaoSolar-challenge-user-crud</h1>
-<p>API Rest desenvolvida em Golang que armazera as informações do usuário (Nome, Email, Senha) em um banco MongoDB. Utilizei o MongoDB Atlas.</p>
+<p>API Rest desenvolvida em Golang que armazena as informações do usuário (Nome, Email, Senha) em um banco MongoDB. Utilizei o MongoDB Atlas.</p>
 
-Go Api Rest
+# Clone este repositório
+$ git clone https://github.com/EstherWI/ConexaoSolar.git
 
-Ir para:
+# Acesse a pasta do projeto no terminal/cmd
+$ cd ~/go-workspace/src (O projeto deve ficar em go-workspace/src/ConexaoSolar)
 
-$ cd ~/go-workspace/src
+# Download dos pacotes:
+$ go get go.mongodb.org/mongo-driver
+$ go get github.com/gorilla/mux
+$ go get github.com/gorilla/handlers
 
-Download dos pacotes:
+# No arquivo helper/helper.go
+Especificar a URI do banco, o nome do banco e a collection (instruções nos comentários)
 
-go get go.mongodb.org/mongo-driver
+# Execute a aplicação em modo de desenvolvimento
+$ go build main.go
+$ go run main.go
 
-go get github.com/gorilla/mux
-
-go get github.com/gorilla/handlers
-
-Rodando API
-
-go run main.go
+# O servidor inciará na porta:8000 - acesse <http://localhost:8000/users> 
