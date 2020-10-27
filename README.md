@@ -16,7 +16,9 @@ $ go get github.com/gorilla/handlers
 Especificar a URI do banco, o nome do banco e a collection (instruções nos comentários)
 
 # Execute a aplicação em modo de desenvolvimento
-$ go build main.go
+```bash
+go build main.go
+```
 $ go run main.go
 
 # O servidor inciará na porta:8000 - acesse <http://localhost:8000/users> 
