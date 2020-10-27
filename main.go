@@ -80,13 +80,32 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(usuario)
 }
 
+//GetByEmail : retorna um usuário pelo email
+func GetByEmail(email string) (*models.Usuario, error) {
+	var collection = helper.ConnectDB()
+	var usuario models.Usuario
+	filter := bson.M{"email": email}
+	err := collection.FindOne(context.TODO(), filter).Decode(&usuario)
+
+	if err != nil {
+		return nil, err
+	}
+	return &usuario, nil
+}
+
 //Create : cria um novo usuário
 func Create(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
+	var output *models.Usuario
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var usuario models.Usuario
-
+	var params = mux.Vars(r)
+	output, _ = GetByEmail(params["email"])
+	if output == nil {
+		return
+	}
 	_ = json.NewDecoder(r.Body).Decode(&usuario)
 
 	// inserindo usuario
