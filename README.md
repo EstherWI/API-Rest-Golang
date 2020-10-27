@@ -1,5 +1,5 @@
-<h1 align="center">ConexaoSolar-challenge-user-crud</h1>
-<p>API Rest desenvolvida em Golang que armazena as informações do usuário (Nome, Email, Senha) em um banco MongoDB. Utilizei o MongoDB Atlas.</p>
+# ConexaoSolar user-crud
+> API Rest desenvolvida em Golang que armazena as informações do usuário (Nome, Email, Senha) em um banco MongoDB (Atlas)
 
 # Clone este repositório
 $ git clone https://github.com/EstherWI/ConexaoSolar.git
