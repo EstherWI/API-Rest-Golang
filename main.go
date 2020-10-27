@@ -16,6 +16,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+//Response estrutura
+type Response struct {
+	Method  string `json:"method"`
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+}
+
+// New Response
+func NewResponse(method, message string, status int) Response {
+
+	return Response{Method: method, Message: message, Status: status}
+
+}
+
 //GetAll : retorna todos os usuários
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	var collection = helper.ConnectDB()
@@ -106,6 +120,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	output, _ = GetByEmail(usuario.Email)
 
 	if output != nil {
+		json.NewEncoder(w).Encode(NewResponse(r.Method, "failed", 400))
 		return
 	}
 
@@ -117,7 +132,8 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(NewResponse(r.Method, "sucess", 201))
+	fmt.Println(result)
 }
 
 //Update : atualiza informações de um usuário
