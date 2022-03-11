@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"ConexaoSolar/helper"
-	"ConexaoSolar/models"
+	"UserCRUD/helper"
+	"UserCRUD/models"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
