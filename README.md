@@ -4,12 +4,12 @@
 
 # Clone este repositório
 ```bash
-$ git clone https://github.com/EstherWI/ConexaoSolar.git
+$ git clone https://github.com/EstherWI/UserCRUD.git
 ```
 
 # Acesse a pasta do projeto no terminal/cmd
 ```bash
-$ cd ~/go-workspace/src (O projeto deve ficar em go-workspace/src/ConexaoSolar)
+$ cd ~/go-workspace/src (O projeto deve ficar em go-workspace/src/UserCRUD)
 ```
 
 # Download dos pacotes:
